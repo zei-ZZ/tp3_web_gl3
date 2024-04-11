@@ -30,6 +30,8 @@ export class UserEntity {
   })
   role: Role;
 
-  @OneToMany(() => CvEntity, (cv: CvEntity) => cv.user, { cascade: ['insert', 'update'] })
+  @OneToMany(() => CvEntity, (cv: CvEntity) => cv.user, {
+    cascade: ['insert', 'update'],
+  })
   cvs: CvEntity[];
 }
