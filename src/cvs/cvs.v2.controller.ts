@@ -9,6 +9,7 @@ import {
   Query,
   UploadedFile,
   UseInterceptors,
+  Version,
 } from '@nestjs/common';
 import { CvsService } from './cvs.service';
 import { CreateCvDto } from './dto/create-cv.dto';
@@ -19,9 +20,9 @@ import { fileUploadOptions } from 'src/file-upload';
 
 @Controller({
   path: 'cvs',
-  version: '1',
+  version: '2',
 })
-export class CvsController {
+export class CvsV2Controller {
   constructor(private readonly cvsService: CvsService) {}
 
   @Post()

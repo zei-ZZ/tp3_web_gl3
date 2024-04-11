@@ -1,26 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCvDto } from './dto/create-cv.dto';
-import { UpdateCvDto } from './dto/update-cv.dto';
+import { CvEntity } from './entities/cv.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CrudService } from '../common/crud/crud.service';
+import { Like, Repository } from 'typeorm';
+import { SearchCvDto } from './dto/search-cv.dto';
+import { Pagination } from 'src/common/dto/pagination.dto';
 
 @Injectable()
-export class CvsService {
-  create(createCvDto: CreateCvDto) {
-    return 'This action adds a new cv';
+export class CvsService extends CrudService<CvEntity> {
+  constructor(
+    @InjectRepository(CvEntity)
+    cvsRepository: Repository<CvEntity>,
+  ) {
+    super(cvsRepository);
   }
 
-  findAll() {
-    return `This action returns all cvs`;
-  }
+  findAllBy(searchCvDto: SearchCvDto): Promise<Pagination<CvEntity>> {
+    const { age, criterion } = searchCvDto;
 
-  findOne(id: number) {
-    return `This action returns a #${id} cv`;
-  }
+    const where = [];
 
-  update(id: number, updateCvDto: UpdateCvDto) {
-    return `This action updates a #${id} cv`;
-  }
+    if (age != null) {
+      where.push({ age });
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} cv`;
+    if (criterion != null) {
+      const like = Like(`%${criterion}%`);
+      const fields: (keyof CvEntity)[] = ['firstname', 'name', 'job'];
+
+      where.push(...fields.map((field) => ({ [field]: like })));
+    }
+
+    return this.findAll(searchCvDto, where);
   }
 }
