@@ -33,7 +33,7 @@ export class AuthService extends CrudService<UserEntity> {
     return [passwordHash, salt];
   }
 
-  async register(registerUserDto: RegisterUserDto): Promise<UserEntity> {
+  async create(registerUserDto: RegisterUserDto): Promise<UserEntity> {
     const { username, email, password, role } = registerUserDto;
 
     const [passwordHash, salt] = await this.hashPassword(password);

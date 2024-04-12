@@ -14,6 +14,7 @@ import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { SearchDto } from 'src/common/dto/search.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Public } from 'src/auth/public.decorator';
 
 @Controller('skills')
 @UseGuards(JwtAuthGuard)
@@ -26,11 +27,13 @@ export class SkillsController {
   }
 
   @Get()
+  @Public()
   findAll(@Query() searchDto: SearchDto) {
     return this.skillsService.findAll(searchDto);
   }
 
   @Get(':id')
+  @Public()
   findOne(@Param('id') id: string) {
     return this.skillsService.findOne(id);
   }
