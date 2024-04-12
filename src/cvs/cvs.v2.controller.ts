@@ -55,15 +55,16 @@ export class CvsV2Controller {
   update(
     @Param('id') id: string,
     @Body() updateCvDto: UpdateCvDto,
+    @User() user: UserEntity,
     @UploadedFile() file?: Express.Multer.File,
   ) {
     updateCvDto.path = file?.filename;
 
-    return this.cvsService.update(id, updateCvDto);
+    return this.cvsService.updateOwned(id, updateCvDto, user.id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cvsService.remove(id);
+  remove(@Param('id') id: string, @User() user: UserEntity) {
+    return this.cvsService.removeOwned(id, user.id);
   }
 }

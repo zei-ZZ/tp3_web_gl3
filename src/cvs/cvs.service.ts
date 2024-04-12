@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CvEntity } from './entities/cv.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CrudService } from '../common/crud/crud.service';
 import { Like, Repository } from 'typeorm';
 import { SearchCvDto } from './dto/search-cv.dto';
 import { Pagination } from 'src/common/dto/pagination.dto';
+import { UpdateCvDto } from './dto/update-cv.dto';
 
 @Injectable()
 export class CvsService extends CrudService<CvEntity> {
@@ -41,5 +42,25 @@ export class CvsService extends CrudService<CvEntity> {
     }
 
     return this.findAll(searchCvDto, where);
+  }
+
+  private async verifyOwnership(id: string, userId: string) {
+    const cv = await this.findOne(id);
+
+    if (cv.user.id !== userId) {
+      throw new ForbiddenException();
+    }
+  }
+
+  async updateOwned(id: string, updateCvDto: UpdateCvDto, userId: string) {
+    await this.verifyOwnership(id, userId);
+
+    return this.update(id, updateCvDto);
+  }
+
+  async removeOwned(id: string, userId: string) {
+    await this.verifyOwnership(id, userId);
+
+    return this.remove(id);
   }
 }
