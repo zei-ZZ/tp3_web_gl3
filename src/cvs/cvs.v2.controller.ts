@@ -9,7 +9,6 @@ import {
   Query,
   UploadedFile,
   UseInterceptors,
-  Version,
 } from '@nestjs/common';
 import { CvsService } from './cvs.service';
 import { CreateCvDto } from './dto/create-cv.dto';
