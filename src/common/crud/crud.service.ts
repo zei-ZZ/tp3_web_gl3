@@ -2,6 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import {
   DeepPartial,
   DeleteResult,
+  FindOptionsRelations,
   FindOptionsWhere,
   Repository,
 } from 'typeorm';
@@ -34,8 +35,14 @@ export abstract class CrudService<TEntity extends Entity> {
     };
   }
 
-  async findOne(id: string): Promise<TEntity> {
-    const entity = await this.repository.findOneBy({ id: id as any });
+  async findOne(
+    id: string,
+    relations?: FindOptionsRelations<TEntity>,
+  ): Promise<TEntity> {
+    const entity = await this.repository.findOne({
+      relations,
+      where: { id: id as any },
+    });
 
     if (!entity) {
       throw new NotFoundException();

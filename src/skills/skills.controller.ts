@@ -12,9 +12,9 @@ import {
 import { SkillsService } from './skills.service';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
-import { SearchDto } from 'src/common/dto/search.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { Public } from 'src/auth/public.decorator';
+import { SearchDto } from '../common/dto/search.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Public } from '../auth/public.decorator';
 
 @Controller('skills')
 @UseGuards(JwtAuthGuard)

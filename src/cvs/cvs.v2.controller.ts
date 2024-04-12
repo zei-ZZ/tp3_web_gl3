@@ -16,9 +16,9 @@ import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { SearchCvDto } from './dto/search-cv.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { fileUploadOptions } from 'src/file-upload';
-import { UserEntity } from 'src/auth/entities/user.entity';
-import { User } from 'src/auth/user.decorator';
+import { fileUploadOptions } from '../file-upload';
+import { UserEntity } from '../auth/entities/user.entity';
+import { User } from '../auth/user.decorator';
 
 @Controller({
   path: 'cvs',

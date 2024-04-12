@@ -4,8 +4,8 @@ import { CvsController } from './cvs.controller';
 import { CvEntity } from './entities/cv.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CvsV2Controller } from './cvs.v2.controller';
-import { AuthMiddleware } from 'src/auth/auth.middleware';
-import { AuthModule } from 'src/auth/auth.module';
+import { AuthMiddleware } from '../auth/auth.middleware';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([CvEntity]), AuthModule],

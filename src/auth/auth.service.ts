@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Role, UserEntity } from './entities/user.entity';
 import { DeepPartial, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CrudService } from 'src/common/crud/crud.service';
+import { CrudService } from '../common/crud/crud.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { compare, genSalt, hash } from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';

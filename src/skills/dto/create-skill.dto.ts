@@ -1,6 +1,4 @@
-import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { CvEntity } from '../../cvs/entities/cv.entity';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateSkillDto {
   @IsString()

@@ -16,10 +16,10 @@ import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { SearchCvDto } from './dto/search-cv.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { fileUploadOptions } from 'src/file-upload';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { User } from 'src/auth/user.decorator';
-import { Role, UserEntity } from 'src/auth/entities/user.entity';
+import { fileUploadOptions } from '../file-upload';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { User } from '../auth/user.decorator';
+import { Role, UserEntity } from '../auth/entities/user.entity';
 
 @Controller({
   path: 'cvs',
@@ -54,7 +54,9 @@ export class CvsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.cvsService.findOne(id);
+    return this.cvsService.findOne(id, {
+      skills: true,
+    });
   }
 
   @Patch(':id')

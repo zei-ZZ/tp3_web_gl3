@@ -10,8 +10,8 @@ import {
   Length,
   ValidateNested,
 } from 'class-validator';
-import { SkillEntity } from '../../skills/entities/skill.entity';
-import { UserEntity } from 'src/auth/entities/user.entity';
+import { UserEntity } from '../../auth/entities/user.entity';
+import { AddSkillDto } from '../../skills/dto/add-skill.dto';
 
 const CIN_LENGTH = 8;
 
@@ -47,8 +47,8 @@ export class CreateCvDto {
   user: UserEntity;
 
   @ValidateNested()
-  @Type(() => SkillEntity)
+  @Type(() => AddSkillDto)
   @IsArray()
   @IsOptional()
-  skills: SkillEntity[];
+  skills: AddSkillDto[];
 }

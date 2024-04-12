@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
-import { SearchDto } from 'src/common/dto/search.dto';
+import { SearchDto } from '../../common/dto/search.dto';
 
 export class SearchCvDto extends SearchDto {
   @IsInt()
