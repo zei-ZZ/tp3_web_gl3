@@ -15,13 +15,14 @@ import { Role, UserEntity } from '../../../auth/entities/user.entity';
 import { genSalt, hash } from 'bcrypt';
 import { SkillEntity } from '../../../skills/entities/skill.entity';
 import { CvEntity } from '../../../cvs/entities/cv.entity';
+import { DeepPartial } from 'typeorm';
 
 export class Generator {
-  async genUser(): Promise<UserEntity> {
+  async genUser(): Promise<DeepPartial<UserEntity>> {
     const saltRounds = 10;
     const salt = await genSalt(saltRounds);
 
-    const user: UserEntity = {
+    const user: DeepPartial<UserEntity> = {
       id: randUuid(),
       username: randUserName(),
       email: randEmail(),
@@ -34,50 +35,53 @@ export class Generator {
     return user;
   }
 
-  async genUsers(count = 1): Promise<UserEntity[]> {
-    const users: UserEntity[] = [];
-
-    for (let i = 0; i < count; i++) {
-      users.push(await this.genUser());
-    }
-
-    return users;
+  genUsers(count = 1): Promise<DeepPartial<UserEntity>[]> {
+    return Promise.all(
+      Array(count)
+        .fill(null)
+        .map(() => this.genUser()),
+    );
   }
 
-  genSkill(): SkillEntity {
-    const skill: SkillEntity = {
+  genSkill(): DeepPartial<SkillEntity> {
+    const skill: DeepPartial<SkillEntity> = {
       id: randUuid(),
       desigantion: randSkill(),
-      cvs: null,
     };
 
     return skill;
   }
 
-  genSkills(count = 1): SkillEntity[] {
-    const skills: SkillEntity[] = [];
-
-    for (let i = 0; i < count; i++) {
-      skills.push(this.genSkill());
-    }
-
-    return skills;
+  genSkills(count = 1): DeepPartial<SkillEntity>[] {
+    return Array(count)
+      .fill(null)
+      .map(() => this.genSkill());
   }
 
-  async genCv(): Promise<CvEntity> {
+  genCvBasic(): DeepPartial<CvEntity> {
+    const cinPartialMax = 9999999;
+
+    return {
+      firstname: randFirstName(),
+      name: randLastName(),
+      cin: rand([0, 1]) + '' + randNumber({ max: cinPartialMax }),
+    };
+  }
+
+  genCvBasicWithUser(user: DeepPartial<UserEntity>): DeepPartial<CvEntity> {
+    return { ...this.genCvBasic(), user };
+  }
+
+  async genCv(): Promise<DeepPartial<CvEntity>> {
     const ageMin = 18;
-    const ageMax = 42;
+    const ageMax = 60;
 
     const skillsMax = 3;
 
-    const cinPartialMax = 9999999;
-
-    const cv: CvEntity = {
+    const cv: DeepPartial<CvEntity> = {
       id: randUuid(),
-      firstname: randFirstName(),
-      name: randLastName(),
+      ...this.genCvBasic(),
       age: randNumber({ min: ageMin, max: ageMax }),
-      cin: rand([0, 1]) + '' + randNumber({ max: cinPartialMax }),
       job: randJobTitle(),
       path: randFilePath(),
       skills: this.genSkills(randNumber({ max: skillsMax })),
@@ -87,12 +91,80 @@ export class Generator {
     return cv;
   }
 
-  async genCvs(count = 1): Promise<CvEntity[]> {
-    const cvs: CvEntity[] = [];
+  private distinct<T>(arr: T[], keys: (keyof T)[]) {
+    return arr.filter((value, index, array) =>
+      keys.every(
+        (key) => array.findIndex((val) => val[key] === value[key]) === index,
+      ),
+    );
+  }
 
-    for (let i = 0; i < count; i++) {
-      cvs.push(await this.genCv());
-    }
+  genCvFromBasicWithUser(
+    basicCv: DeepPartial<CvEntity>,
+    availableSkills: DeepPartial<SkillEntity>[],
+    maxSkillsPerCv: number,
+  ): DeepPartial<CvEntity> {
+    const ageMin = 18;
+    const ageMax = 60;
+
+    const skills = this.distinct(
+      rand(availableSkills, {
+        length: randNumber({
+          max: Math.min(maxSkillsPerCv, availableSkills.length),
+        }),
+      }),
+      ['id'],
+    );
+
+    const cv: DeepPartial<CvEntity> = {
+      id: randUuid(),
+      ...basicCv,
+      age: randNumber({ min: ageMin, max: ageMax }),
+      job: randJobTitle(),
+      path: randFilePath(),
+      skills,
+    };
+
+    return cv;
+  }
+
+  genCvs(count = 1): Promise<DeepPartial<CvEntity>[]> {
+    return Promise.all(
+      Array(count)
+        .fill(null)
+        .map(() => this.genCv()),
+    );
+  }
+
+  async genCvsWithReuse(
+    maxCvsPerUser: number,
+    maxUsers: number,
+    maxSkills: number,
+    maxSkillsPerCv: number,
+  ): Promise<DeepPartial<CvEntity>[]> {
+    const users = this.distinct(await this.genUsers(maxUsers), [
+      'id',
+      'username',
+      'email',
+    ]);
+    const skills = this.distinct(this.genSkills(maxSkills), [
+      'id',
+      'desigantion',
+    ]);
+
+    const cvs = this.distinct(
+      users.flatMap((user) => {
+        const basicCv = this.genCvBasicWithUser(user);
+        const count = randNumber({ max: maxCvsPerUser });
+
+        return Array(count)
+          .fill(null)
+          .map(() =>
+            this.genCvFromBasicWithUser(basicCv, skills, maxSkillsPerCv),
+          );
+      }),
+      ['id'],
+    );
 
     return cvs;
   }
