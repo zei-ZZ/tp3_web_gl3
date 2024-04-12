@@ -15,20 +15,29 @@ export class CvsService extends CrudService<CvEntity> {
     super(cvsRepository);
   }
 
-  findAllBy(searchCvDto: SearchCvDto): Promise<Pagination<CvEntity>> {
+  findAllBy(
+    searchCvDto: SearchCvDto,
+    id?: string,
+  ): Promise<Pagination<CvEntity>> {
     const { age, criterion } = searchCvDto;
+
+    const condition = id ? { user: { id } } : null;
 
     const where = [];
 
     if (age != null) {
-      where.push({ age });
+      where.push({ age, ...condition });
     }
 
     if (criterion != null) {
       const like = Like(`%${criterion}%`);
       const fields: (keyof CvEntity)[] = ['firstname', 'name', 'job'];
 
-      where.push(...fields.map((field) => ({ [field]: like })));
+      where.push(...fields.map((field) => ({ [field]: like, ...condition })));
+    }
+
+    if (where.length === 0 && condition) {
+      where.push(condition);
     }
 
     return this.findAll(searchCvDto, where);

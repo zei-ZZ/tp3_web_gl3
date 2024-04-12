@@ -17,6 +17,8 @@ import { UpdateCvDto } from './dto/update-cv.dto';
 import { SearchCvDto } from './dto/search-cv.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileUploadOptions } from 'src/file-upload';
+import { UserEntity } from 'src/auth/entities/user.entity';
+import { User } from 'src/auth/user.decorator';
 
 @Controller({
   path: 'cvs',
@@ -29,8 +31,10 @@ export class CvsV2Controller {
   @UseInterceptors(FileInterceptor('file', fileUploadOptions))
   create(
     @Body() createCvDto: CreateCvDto,
+    @User() user: UserEntity,
     @UploadedFile() file?: Express.Multer.File,
   ) {
+    createCvDto.user = user;
     createCvDto.path = file?.filename;
 
     return this.cvsService.create(createCvDto);
