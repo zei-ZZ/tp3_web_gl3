@@ -18,14 +18,15 @@ async function bootstrap() {
 
   await dataSource.initialize();
 
-  const cvRepository = dataSource.getRepository(CvEntity);
-
   const generator = new Generator();
   const cvsCount = 6;
 
-  const cvs = await generator.genCvs(cvsCount);
+  const generatedCvs = await generator.genCvs(cvsCount);
 
-  cvRepository.save(cvs);
+  const cvsRepository = dataSource.getRepository(CvEntity);
+
+  const cvs = await cvsRepository.save(generatedCvs);
+  console.log(cvs);
 
   await dataSource.destroy();
 }
