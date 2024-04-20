@@ -46,7 +46,7 @@ export class Generator {
   genSkill(): DeepPartial<SkillEntity> {
     const skill: DeepPartial<SkillEntity> = {
       id: randUuid(),
-      desigantion: randSkill(),
+      designation: randSkill(),
     };
 
     return skill;
@@ -149,7 +149,7 @@ export class Generator {
     ]);
     const skills = this.distinct(this.genSkills(maxSkills), [
       'id',
-      'desigantion',
+      'designation',
     ]);
 
     const cvs = this.distinct(

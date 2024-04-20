@@ -7,7 +7,7 @@ export class SkillEntity {
   id: string;
 
   @Column({ unique: true })
-  desigantion: string;
+  designation: string;
 
   @ManyToMany(() => CvEntity, { cascade: ['insert', 'update'] })
   cvs: CvEntity[];
