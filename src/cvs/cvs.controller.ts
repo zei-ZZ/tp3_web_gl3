@@ -20,6 +20,9 @@ import { fileUploadOptions } from '../file-upload';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User } from '../auth/user.decorator';
 import { Role, UserEntity } from '../auth/entities/user.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventType } from '../events/entities/event.entity';
+import { CreateEventDto } from '../events/dto/create-event.dto';
 
 @Controller({
   path: 'cvs',
@@ -27,11 +30,14 @@ import { Role, UserEntity } from '../auth/entities/user.entity';
 })
 @UseGuards(JwtAuthGuard)
 export class CvsController {
-  constructor(private readonly cvsService: CvsService) {}
+  constructor(
+    private readonly cvsService: CvsService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('file', fileUploadOptions))
-  create(
+  async create(
     @Body() createCvDto: CreateCvDto,
     @User() user: UserEntity,
     @UploadedFile() file?: Express.Multer.File,
@@ -39,7 +45,14 @@ export class CvsController {
     createCvDto.user = user;
     createCvDto.path = file?.filename;
 
-    return this.cvsService.create(createCvDto);
+    const cv = await this.cvsService.create(createCvDto);
+    this.eventEmitter.emit(EventType.ADD, {
+      user,
+      cv,
+      type: EventType.ADD,
+    } as CreateEventDto);
+
+    return cv;
   }
 
   @Get()
@@ -61,18 +74,35 @@ export class CvsController {
 
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file', fileUploadOptions))
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateCvDto: UpdateCvDto,
+    @User() user: UserEntity,
     @UploadedFile() file?: Express.Multer.File,
   ) {
     updateCvDto.path = file?.filename;
 
-    return this.cvsService.update(id, updateCvDto);
+    const cv = await this.cvsService.update(id, updateCvDto);
+    this.eventEmitter.emit(EventType.UPDATE, {
+      user,
+      cv,
+      type: EventType.UPDATE,
+    } as CreateEventDto);
+    return cv;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cvsService.remove(id);
+  async remove(@Param('id') id: string, @User() user: UserEntity) {
+    const cv = await this.cvsService.findOne(id);
+
+    const result = this.cvsService.remove(id);
+
+    this.eventEmitter.emit(EventType.DELETE, {
+      user,
+      cv,
+      type: EventType.DELETE,
+    } as CreateEventDto);
+
+    return result;
   }
 }
