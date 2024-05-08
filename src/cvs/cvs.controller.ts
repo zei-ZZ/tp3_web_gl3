@@ -46,6 +46,7 @@ export class CvsController {
     createCvDto.path = file?.filename;
 
     const cv = await this.cvsService.create(createCvDto);
+
     this.eventEmitter.emit(EventType.ADD, {
       user,
       cv,
@@ -82,18 +83,22 @@ export class CvsController {
   ) {
     updateCvDto.path = file?.filename;
 
-    const cv = await this.cvsService.update(id, updateCvDto);
+    await this.cvsService.update(id, updateCvDto);
+
+    const cv = await this.cvsService.findOne(id, { user: true, skills: true });
+
     this.eventEmitter.emit(EventType.UPDATE, {
       user,
       cv,
       type: EventType.UPDATE,
     } as CreateEventDto);
+
     return cv;
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string, @User() user: UserEntity) {
-    const cv = await this.cvsService.findOne(id);
+    const cv = await this.cvsService.findOne(id, { user: true, skills: true });
 
     const result = this.cvsService.remove(id);
 
