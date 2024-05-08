@@ -13,6 +13,12 @@ export class EventsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.eventsService.findOne(id);
+    return this.eventsService.findOne(id, {
+      user: true,
+      cv: {
+        user: true,
+        skills: true,
+      },
+    });
   }
 }
