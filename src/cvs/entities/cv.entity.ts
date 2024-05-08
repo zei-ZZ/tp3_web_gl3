@@ -4,6 +4,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -42,16 +43,6 @@ export class CvEntity {
   user: UserEntity;
 
   @ManyToMany(() => SkillEntity, { cascade: ['insert', 'update'] })
-  // @JoinTable({
-  //   name: 'cv_skill',
-  //   joinColumn: {
-  //     name: 'cv',
-  //     referencedColumnName: 'id',
-  //   },
-  //   inverseJoinColumn: {
-  //     name: 'skill',
-  //     referencedColumnName: 'id',
-  //   },
-  // })
+  @JoinTable()
   skills: SkillEntity[];
 }
