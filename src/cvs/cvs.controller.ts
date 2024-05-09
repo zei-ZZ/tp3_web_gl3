@@ -53,7 +53,7 @@ export class CvsController {
       type: EventType.ADD,
     } as CreateEventDto);
 
-    this.sseService.emit('created', cv);
+    this.sseService.emit('created', { cv, user });
     return cv;
   }
 
@@ -93,7 +93,7 @@ export class CvsController {
       cv,
       type: EventType.UPDATE,
     } as CreateEventDto);
-    this.sseService.emit('updated', cv);
+    this.sseService.emit('updated', { cv, user });
 
     return cv;
   }
@@ -109,7 +109,7 @@ export class CvsController {
       cv,
       type: EventType.DELETE,
     } as CreateEventDto);
-    this.sseService.emit('deleted', cv);
+    this.sseService.emit('deleted', { cv, user });
 
     return result;
   }

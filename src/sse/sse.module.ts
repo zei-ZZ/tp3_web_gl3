@@ -6,6 +6,6 @@ import { AuthModule } from 'src/auth/auth.module';
   imports: [AuthModule],
   controllers: [SSEController],
   providers: [SseService],
-    exports: [SseService],
+  exports: [SseService],
 })
 export class SseModule {}
