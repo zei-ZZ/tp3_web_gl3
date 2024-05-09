@@ -9,6 +9,7 @@ export class EventListener {
   constructor(private readonly eventsService: EventsService) {}
   @OnEvent(`${CV}.*`)
   async handleEverything(payload: CreateEventDto) {
+    console.log('EventListener.handleEverything', payload.cv.id, payload.type );
     return this.eventsService.create(payload);
   }
 }

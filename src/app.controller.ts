@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Res, Sse, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { User } from './auth/user.decorator';
 import { UserEntity } from './auth/entities/user.entity';
@@ -8,7 +8,7 @@ import { AdminGuard } from './auth/admin.guard';
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
-
+  
   @Get()
   getHello(): string {
     return this.appService.getHello();
@@ -25,4 +25,5 @@ export class AppController {
   getAdmin(@User() user: UserEntity): UserEntity {
     return user;
   }
+
 }

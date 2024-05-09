@@ -15,6 +15,7 @@ import { join } from 'path';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EventsModule } from './events/events.module';
 import { EventEntity } from './events/entities/event.entity';
+import { SseModule } from './sse/sse.module';
 
 @Module({
   imports: [
@@ -41,8 +42,9 @@ import { EventEntity } from './events/entities/event.entity';
     SkillsModule,
     CommonModule,
     EventsModule,
+    SseModule
   ],
-  controllers: [AppController],
+  controllers: [AppController,],
   providers: [AppService],
 })
 export class AppModule {}
