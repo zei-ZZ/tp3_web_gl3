@@ -42,9 +42,9 @@ import { SseModule } from './sse/sse.module';
     SkillsModule,
     CommonModule,
     EventsModule,
-    SseModule
+    SseModule,
   ],
-  controllers: [AppController,],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

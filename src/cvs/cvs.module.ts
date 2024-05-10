@@ -9,7 +9,7 @@ import { AuthModule } from '../auth/auth.module';
 import { SseModule } from 'src/sse/sse.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CvEntity]), AuthModule,SseModule],
+  imports: [TypeOrmModule.forFeature([CvEntity]), AuthModule, SseModule],
   controllers: [CvsController, CvsV2Controller],
   providers: [CvsService],
 })
