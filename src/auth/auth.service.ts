@@ -84,9 +84,4 @@ export class AuthService extends CrudService<UserEntity> {
 
     return super.update(id, user);
   }
-
-  async getUser(userId: string): Promise<UserEntity> {
-    const user = await this.repository.findOneById(userId);
-    return user;
-  }
 }

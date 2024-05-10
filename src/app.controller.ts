@@ -1,4 +1,4 @@
-import { Controller, Get, Res, Sse, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { User } from './auth/user.decorator';
 import { UserEntity } from './auth/entities/user.entity';

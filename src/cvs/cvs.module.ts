@@ -6,10 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CvsV2Controller } from './cvs.v2.controller';
 import { AuthMiddleware } from '../auth/auth.middleware';
 import { AuthModule } from '../auth/auth.module';
-import { SseModule } from 'src/sse/sse.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CvEntity]), AuthModule, SseModule],
+  imports: [TypeOrmModule.forFeature([CvEntity]), AuthModule],
   controllers: [CvsController, CvsV2Controller],
   providers: [CvsService],
 })

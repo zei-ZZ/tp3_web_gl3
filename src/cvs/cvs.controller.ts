@@ -22,8 +22,7 @@ import { User } from '../auth/user.decorator';
 import { Role, UserEntity } from '../auth/entities/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EventType } from '../events/entities/event.entity';
-import { CreateEventDto } from '../events/dto/create-event.dto';
-import { SseService } from 'src/sse/sse.service';
+import { CreateEventModel } from '../events/model/create-event.model';
 
 @Controller({
   path: 'cvs',
@@ -34,7 +33,6 @@ export class CvsController {
   constructor(
     private readonly cvsService: CvsService,
     private readonly eventEmitter: EventEmitter2,
-    private sseService: SseService,
   ) {}
 
   @Post()
@@ -44,6 +42,7 @@ export class CvsController {
     @User() user: UserEntity,
     @UploadedFile() file?: Express.Multer.File,
   ) {
+    createCvDto.user = user;
     createCvDto.path = file?.filename;
 
     const cv = await this.cvsService.create(createCvDto);
@@ -51,9 +50,8 @@ export class CvsController {
       user,
       cv,
       type: EventType.ADD,
-    } as CreateEventDto);
+    } as CreateEventModel);
 
-    this.sseService.emit('created', { cv, user });
     return cv;
   }
 
@@ -92,15 +90,14 @@ export class CvsController {
       user,
       cv,
       type: EventType.UPDATE,
-    } as CreateEventDto);
-    this.sseService.emit('updated', { cv, user });
+    } as CreateEventModel);
 
     return cv;
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string, @User() user: UserEntity) {
-    const cv = await this.cvsService.findOne(id, { user: true });
+    const cv = await this.cvsService.findOne(id, { user: true, skills: true });
 
     const result = this.cvsService.remove(id);
 
@@ -108,8 +105,7 @@ export class CvsController {
       user,
       cv,
       type: EventType.DELETE,
-    } as CreateEventDto);
-    this.sseService.emit('deleted', { cv, user });
+    } as CreateEventModel);
 
     return result;
   }

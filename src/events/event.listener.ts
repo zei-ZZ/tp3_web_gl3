@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { CreateEventDto } from './dto/create-event.dto';
+import { CreateEventModel } from './model/create-event.model';
 import { CV } from './entities/event.entity';
 import { EventsService } from './events.service';
 
@@ -8,14 +8,7 @@ import { EventsService } from './events.service';
 export class EventListener {
   constructor(private readonly eventsService: EventsService) {}
   @OnEvent(`${CV}.*`)
-  async handleEverything(payload: CreateEventDto) {
-    console.log(
-      'EventListener.handleEverything',
-      payload.cv.id,
-      payload.type,
-      'associated user :',
-      payload.user.id,
-    );
-    return this.eventsService.create(payload);
+  handleEverything(createEventModel: CreateEventModel) {
+    return this.eventsService.create(createEventModel);
   }
 }

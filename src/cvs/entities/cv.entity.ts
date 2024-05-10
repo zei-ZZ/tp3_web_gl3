@@ -9,7 +9,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { IsOptional } from 'class-validator';
 
 @Entity('cv')
 export class CvEntity {
@@ -43,7 +42,6 @@ export class CvEntity {
   @JoinColumn()
   user: UserEntity;
 
-  @IsOptional()
   @ManyToMany(() => SkillEntity, { cascade: ['insert', 'update'] })
   @JoinTable()
   skills: SkillEntity[];
